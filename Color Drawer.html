@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: rgb(2, 43, 48);
+
+        }
+
+
+        #grid {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+
+        }
+
+        button {
+            position: absolute;
+            width: 1.5em;
+            height: 1.5em;
+            right: 1em;
+        }
+
+        #simCol {
+            top: 2em;
+            background-color: blanchedalmond;
+        }
+
+        #randCol {
+            top: 4em;
+
+        }
+
+        #makeBlue {
+            top: 6em;
+            background-color: blue;
+        }
+
+        #glow {
+            top: 8em;
+            background-color: rgb(255, 230, 87);
+        }
+
+        #eraser {
+            top: 10em;
+            background-color: white;
+        }
+
+        #inputCol {
+            position: absolute;
+            width: 1.5em;
+            height: 1.5em;
+            right: 1em;
+            top: 12em;
+        }
+
+        .animation {
+            animation: glow .5s;
+        }
+
+        .animation2 {
+            animation: glow2 .5s;
+        }
+
+        @keyframes glow {
+            0% {
+                background-color: rgb(255, 230, 87);
+            }
+        }
+
+        @keyframes glow2 {
+            0% {
+                background-color: rgb(255, 230, 87);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="reset">R</button>
+    <button id="simCol"></button>
+    <button id="randCol">?</button>
+    <button id="makeBlue"></button>
+    <button id="glow"></button>
+    <button id="eraser"></button>
+    <input type="color" id=inputCol>
+
+    <div id="grid">
+
+    </div>
+
+
+    <script>
+        const grid = document.querySelector('#grid')
+        let gridAmount = 1000;
+        grid.style.display = "grid";
+        grid.style.gridTemplateColumns = `repeat(${50},1fr)`;
+
+
+
+        r = Math.floor(Math.random() * 256);
+        g = Math.floor(Math.random() * 256);
+        b = Math.floor(Math.random() * 256);
+
+        let rDown = true
+        let gDown = true
+        let bDown = true
+
+        document.getElementById("reset").addEventListener("click", reset)
+        document.getElementById("randCol").addEventListener("click", randColFunc)
+        document.getElementById("simCol").addEventListener("click", simColFunc)
+        document.getElementById("makeBlue").addEventListener("click", makeBlueFunc)
+        document.getElementById("glow").addEventListener("click", glowFunc)
+        document.getElementById("eraser").addEventListener("click", eraserFunc)
+        document.getElementById("inputCol").addEventListener("click", inputColFunc)
+
+        for (i = 0; i < gridAmount; i++) {
+            let cell = document.createElement("div");
+            grid.appendChild(cell);
+        }
+
+        function removeEventListeners() {
+            grid.removeEventListener('mouseover', randCol);
+            grid.removeEventListener('mouseover', simCol);
+            grid.removeEventListener('mouseover', makeBlue);
+            grid.removeEventListener('mouseover', glow);
+            grid.removeEventListener('mouseover', eraser);
+            grid.removeEventListener('mouseover', inputCol);
+        }
+
+        function randColFunc() {
+            removeEventListeners()
+            grid.addEventListener('mouseover', randCol);
+        }
+
+        function simColFunc() {
+            removeEventListeners()
+            grid.addEventListener('mouseover', simCol);
+        }
+
+        function makeBlueFunc() {
+            removeEventListeners()
+            grid.addEventListener('mouseover', makeBlue);
+        }
+
+        function glowFunc() {
+            removeEventListeners()
+            grid.addEventListener('mouseover', glow);
+        }
+
+        function eraserFunc() {
+            removeEventListeners()
+            grid.addEventListener('mouseover', eraser);
+        }
+
+        function inputColFunc() {
+            removeEventListeners()
+            grid.addEventListener('mouseover', inputCol);
+        }
+
+
+
+        function reset() {
+            for (i = 0; i < gridAmount; i++) {
+                while (grid.firstChild) {
+                    grid.removeChild(grid.lastChild)
+                }
+            }
+
+            for (i = 0; i < gridAmount; i++) {
+                let cell = document.createElement("div");
+                grid.appendChild(cell);
+            }
+        }
+
+        function randCol(e) {
+            r = Math.floor(Math.random() * 256);
+            g = Math.floor(Math.random() * 256);
+            b = Math.floor(Math.random() * 256);
+
+            e.target.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function makeBlue(e) {
+            if (e.target.style.backgroundColor === "blue") {
+                e.target.style.backgroundColor = "red";
+            }
+            else {
+                e.target.style.backgroundColor = "blue";
+            }
+        }
+
+        function simCol(e) {
+
+            let int = 2
+
+            if (r >= 15 && rDown === true) {
+                r -= int
+
+
+            }
+            else if (r <= 15 && g >= 15 && gDown === true) {
+                g -= int;
+                rDown = false
+
+
+            }
+            else if (g <= 15 && b >= 15 && bDown === true) {
+                b -= int;
+                gDown = false
+
+
+            }
+            else if (b <= 15 && r <= 255) {
+                r += int
+                rDown = false
+
+
+            }
+            else if (r >= 255 && g <= 255) {
+                g += int
+
+
+            }
+            else if (g >= 255 && b <= 255) {
+                b += int
+
+
+            }
+            else if (b >= 255) {
+                r -= int
+                rDown = true
+                gDown = true
+                bDown = true
+
+
+            }
+            else {
+                r -= int;
+            }
+            e.target.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+        }
+
+        function glow(e) {
+
+            let el = e.target
+            if (el.classList.contains("animation")) {
+                el.classList.remove("animation");
+                el.classList.add("animation2")
+            }
+            else if (el.classList.contains("animation2")) {
+                el.classList.remove("animation2")
+                el.classList.add("animation")
+            }
+            else {
+                el.classList.add("animation");
+            }
+        }
+
+        function eraser(e) {
+            e.target.style.backgroundColor = "initial"
+        }
+
+        function inputCol(e) {
+            let inputColVal = document.querySelector("#inputCol").value;
+            e.target.style.backgroundColor = inputColVal;
+        }
+    </script>
+</body>
+
+</html>
